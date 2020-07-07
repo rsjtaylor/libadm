@@ -1,6 +1,7 @@
 #include "adm/private/xml_parser.hpp"
 #include "adm/common_definitions.hpp"
 #include "adm/private/xml_parser_helper.hpp"
+#include "adm/detail/named_type_validators.hpp"
 #include "adm/errors.hpp"
 namespace adm {
   namespace xml {
@@ -417,12 +418,93 @@ namespace adm {
       return audioBlockFormat;
     }
 
-    SpeakerPosition parseSpeakerPosition(std::vector<NodePtr> nodes) {
-      SpeakerPosition speakerPosition;
+
+    SpeakerPosition parseSpeakerPosition(
+        std::vector<NodePtr> nodes) {
+      std::vector<std::pair<NodePtr, CartesianCoordinateValue>>
+          cartesianCoordinates;
+      std::vector<std::pair<NodePtr, SphericalCoordinateValue>>
+          sphericalCoordinates;
+      for(auto const& element : nodes) {
+        auto coordinate = element->first_attribute("coordinate");
+        if(coordinate) {
+          auto axis = coordinate->value();
+          if(axis == std::string("X")
+              || axis == std::string("Y")
+              || axis == std::string("Z")) {
+            cartesianCoordinates.emplace_back(element, axis);
+          }
+          if(axis == std::string{"azimuth"}
+              || axis == std::string{"elevation"}
+              || axis == std::string{"distance"}) {
+            sphericalCoordinates.emplace_back(element, axis);
+          }
+        }
+      }
+
+      if(cartesianCoordinates.empty() && sphericalCoordinates.empty()) {
+        throw std::runtime_error("SpeakerPosition has neither cartesian nor spherical coordinates");
+      }
+
+      if(!cartesianCoordinates.empty() && !sphericalCoordinates.empty()) {
+        throw std::runtime_error("SpeakerPosition has both cartesian and spherical coordinates");
+      }
+
+      if(!cartesianCoordinates.empty()) {
+        return parseCartesianSpeakerPosition(cartesianCoordinates);
+      } else {
+        return parseSphericalSpeakerPosition(sphericalCoordinates);
+      }
+    }
+
+    CartesianSpeakerPosition parseCartesianSpeakerPosition(
+        const std::vector<std::pair<adm::xml::NodePtr, adm::CartesianCoordinateValue>>&
+        cartesianCoordinates) {
+      adm::CartesianSpeakerPosition speakerPosition;
+      adm::ScreenEdgeLock screenEdgeLock;
+      for (auto& coord : cartesianCoordinates) {
+        auto element = coord.first;
+        auto axe = coord.second;
+        auto bound = adm::xml::parseOptionalAttribute<adm::BoundValue>(element, "bound");
+        if (axe == "X") {
+          if (bound == boost::none) {
+            adm::xml::setValue<adm::X>(element, speakerPosition);
+            adm::xml::setOptionalAttribute<adm::HorizontalEdge>(element, "screenEdgeLock",
+                                                                screenEdgeLock);
+          } else if (bound.get() == "min") {
+            adm::xml::setValue<adm::XMin>(element, speakerPosition);
+          } else if (bound.get() == "max") {
+            adm::xml::setValue<adm::XMax>(element, speakerPosition);
+          }
+        } else if (axe == "Y") {
+          if (bound == boost::none) {
+            adm::xml::setValue<adm::Y>(element, speakerPosition);
+            adm::xml::setOptionalAttribute<adm::VerticalEdge>(element, "screenEdgeLock", screenEdgeLock);
+          } else if (bound.get() == "min") {
+            adm::xml::setValue<adm::YMin>(element, speakerPosition);
+          } else if (bound.get() == "max") {
+            adm::xml::setValue<adm::YMax>(element, speakerPosition);
+          }
+        } else if (axe == "Z") {
+          if (bound == boost::none) {
+            adm::xml::setValue<adm::Z>(element, speakerPosition);
+          } else if (bound.get() == "min") {
+            adm::xml::setValue<adm::ZMin>(element, speakerPosition);
+          } else if (bound.get() == "max") {
+            adm::xml::setValue<adm::ZMax>(element, speakerPosition);
+          }
+        }
+      }
+      speakerPosition.set(screenEdgeLock);
+      return speakerPosition;
+    }
+
+    SphericalSpeakerPosition parseSphericalSpeakerPosition(std::vector<std::pair<NodePtr, SphericalCoordinateValue>> const& sphericalCoordinates) {
+      SphericalSpeakerPosition speakerPosition;
       ScreenEdgeLock screenEdgeLock;
-      for (auto& element : nodes) {
-        auto axe =
-            parseAttribute<SphericalCoordinateValue>(element, "coordinate");
+      for (auto& coordinate : sphericalCoordinates) {
+        auto element = coordinate.first;
+        auto axe = coordinate.second;
         auto bound = parseOptionalAttribute<BoundValue>(element, "bound");
         if (axe == "azimuth") {
           if (bound == boost::none) {

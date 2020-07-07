@@ -6,13 +6,13 @@ TEST_CASE("audio_block_format_direct_speakers") {
   using namespace adm;
   {
     AudioBlockFormatDirectSpeakers blockFormat;
-    auto speakerPosition = SpeakerPosition(Azimuth(30), Elevation(10));
+    auto speakerPosition = SphericalSpeakerPosition(Azimuth(30), Elevation(10));
 
     REQUIRE(blockFormat.has<AudioBlockFormatId>() == true);
     REQUIRE(blockFormat.has<Rtime>() == true);
     REQUIRE(blockFormat.has<Duration>() == false);
     REQUIRE(blockFormat.has<SpeakerLabels>() == false);
-    REQUIRE(blockFormat.has<SpeakerPosition>() == false);
+    REQUIRE(blockFormat.has<SphericalSpeakerPosition>() == false);
 
     REQUIRE(blockFormat.isDefault<Rtime>() == true);
     REQUIRE(blockFormat.get<Rtime>().get() == std::chrono::seconds(0));
@@ -26,7 +26,7 @@ TEST_CASE("audio_block_format_direct_speakers") {
     REQUIRE(blockFormat.has<Rtime>() == true);
     REQUIRE(blockFormat.has<Duration>() == true);
     REQUIRE(blockFormat.has<SpeakerLabels>() == true);
-    REQUIRE(blockFormat.has<SpeakerPosition>() == true);
+    REQUIRE(blockFormat.has<SphericalSpeakerPosition>() == true);
 
     REQUIRE(blockFormat.isDefault<Rtime>() == false);
     REQUIRE(blockFormat.isDefault<Duration>() == false);
@@ -34,18 +34,18 @@ TEST_CASE("audio_block_format_direct_speakers") {
     REQUIRE(blockFormat.get<Rtime>().get() == std::chrono::seconds(1));
     REQUIRE(blockFormat.get<Duration>().get() == std::chrono::seconds(10));
     REQUIRE(*blockFormat.get<SpeakerLabels>().begin() == "M+30");
-    REQUIRE(blockFormat.get<SpeakerPosition>().get<Azimuth>() == 30);
-    REQUIRE(blockFormat.get<SpeakerPosition>().get<Elevation>() == 10);
+    REQUIRE(blockFormat.get<SphericalSpeakerPosition>().get<Azimuth>() == 30);
+    REQUIRE(blockFormat.get<SphericalSpeakerPosition>().get<Elevation>() == 10);
 
     blockFormat.unset<Rtime>();
     blockFormat.unset<Duration>();
     blockFormat.unset<SpeakerLabels>();
-    blockFormat.unset<SpeakerPosition>();
+    blockFormat.unset<SphericalSpeakerPosition>();
 
     REQUIRE(blockFormat.has<Rtime>() == true);
     REQUIRE(blockFormat.has<Duration>() == false);
     REQUIRE(blockFormat.has<SpeakerLabels>() == false);
-    REQUIRE(blockFormat.has<SpeakerPosition>() == false);
+    REQUIRE(blockFormat.has<SphericalSpeakerPosition>() == false);
 
     REQUIRE(blockFormat.isDefault<Rtime>() == true);
 
