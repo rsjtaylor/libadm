@@ -22,7 +22,7 @@ TEST_CASE("xml_parser/audio_block_format_direct_speakers") {
 
   auto speakerLabels = firstBlockFormat.get<SpeakerLabels>();
   REQUIRE(*speakerLabels.begin() == "M+30");
-  auto speakerPosition = firstBlockFormat.get<SpeakerPosition>();
-  REQUIRE(firstBlockFormat.get<SpeakerPosition>().get<Azimuth>() == 30.0f);
-  REQUIRE(firstBlockFormat.get<SpeakerPosition>().get<Elevation>() == 0.0f);
+  auto speakerPosition = firstBlockFormat.get<SphericalSpeakerPosition>();
+  REQUIRE(firstBlockFormat.get<SphericalSpeakerPosition>().get<Azimuth>() == 30.0f);
+  REQUIRE(firstBlockFormat.get<SphericalSpeakerPosition>().get<Elevation>() == 0.0f);
 }

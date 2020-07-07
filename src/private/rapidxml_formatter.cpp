@@ -287,7 +287,13 @@ namespace adm {
       node.addOptionalAttribute<Rtime>(&audioBlock, "rtime");
       node.addOptionalAttribute<Duration>(&audioBlock, "duration");
       node.addMultiElement<SpeakerLabels>(&audioBlock, "speakerLabel", &formatSpeakerLabels);
-      node.addMultiElement<SpeakerPosition>(&audioBlock, "position", &formatSpeakerPosition);
+      if(audioBlock.has<SphericalSpeakerPosition>()) {
+        node.addMultiElement<SphericalSpeakerPosition>(&audioBlock, "position", &formatSphericalSpeakerPosition);
+      }
+      if(audioBlock.has<CartesianSpeakerPosition>()) {
+        node.addMultiElement<CartesianSpeakerPosition>(&audioBlock, "position", &formatCartesianSpeakerPosition);
+      }
+
       // clang-format on
     }
 
@@ -299,8 +305,8 @@ namespace adm {
       }
     }
 
-    void formatSpeakerPosition(XmlNode &parentNode, const std::string &name,
-                               const SpeakerPosition &position) {
+    void formatSphericalSpeakerPosition(XmlNode &parentNode, const std::string &name,
+                               const SphericalSpeakerPosition &position) {
       auto azimuthNode = parentNode.addNode(name);
       azimuthNode.addAttribute("coordinate", "azimuth");
       azimuthNode.addOptionalAttribute<AzimuthMin>(&position, "min");
@@ -328,6 +334,39 @@ namespace adm {
         distanceNode.addOptionalAttribute<DistanceMin>(&position, "min");
         distanceNode.addOptionalAttribute<DistanceMax>(&position, "max");
         distanceNode.setValue(position.get<Distance>());
+      }
+    }
+
+    void formatCartesianSpeakerPosition(
+        XmlNode &parentNode, const std::string &name,
+        const CartesianSpeakerPosition &position) {
+      auto xNode = parentNode.addNode(name);
+      xNode.addAttribute("coordinate", "x");
+      xNode.addOptionalAttribute<XMin>(&position, "min");
+      xNode.addOptionalAttribute<XMax>(&position, "max");
+      if (position.has<ScreenEdgeLock>()) {
+        auto screenEdgeLock = position.get<ScreenEdgeLock>();
+        xNode.addOptionalAttribute<HorizontalEdge>(&screenEdgeLock,
+                                                         "screenEdgeLock");
+      }
+      xNode.setValue(position.get<X>());
+
+      auto yNode = parentNode.addNode(name);
+      yNode.addAttribute("coordinate", "y");
+      yNode.addOptionalAttribute<YMin>(&position, "min");
+      yNode.addOptionalAttribute<YMax>(&position, "max");
+      if (position.has<ScreenEdgeLock>()) {
+        auto screenEdgeLock = position.get<ScreenEdgeLock>();
+        yNode.addOptionalAttribute<VerticalEdge>(&screenEdgeLock,
+                                                         "screenEdgeLock");
+      }
+      yNode.setValue(position.get<Y>());
+      if (!position.isDefault<Z>()) {
+        auto zNode = parentNode.addNode(name);
+        zNode.addAttribute("coordinate", "z");
+        zNode.addOptionalAttribute<ZMin>(&position, "min");
+        zNode.addOptionalAttribute<ZMax>(&position, "max");
+        zNode.setValue(position.get<Z>());
       }
     }
 

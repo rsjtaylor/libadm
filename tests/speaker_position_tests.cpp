@@ -4,7 +4,7 @@
 TEST_CASE("speaker_position") {
   using namespace adm;
   {
-    auto speaker = SpeakerPosition(Azimuth(10), Elevation(45));
+    auto speaker = SphericalSpeakerPosition(Azimuth(10), Elevation(45));
 
     REQUIRE(speaker.has<Azimuth>() == true);
     REQUIRE(speaker.has<Elevation>() == true);
@@ -13,7 +13,7 @@ TEST_CASE("speaker_position") {
     REQUIRE(speaker.get<Elevation>() == 45);
   }
   {
-    auto speaker = SpeakerPosition(
+    auto speaker = SphericalSpeakerPosition(
         Azimuth(10), Elevation(45),
         ScreenEdgeLock(VerticalEdge("top"), HorizontalEdge("right")));
 
@@ -38,7 +38,7 @@ TEST_CASE("speaker_position") {
   }
   {
     auto speaker =
-        SpeakerPosition(Azimuth(10), AzimuthMin(5), AzimuthMax(15),
+        SphericalSpeakerPosition(Azimuth(10), AzimuthMin(5), AzimuthMax(15),
                         Elevation(45), ElevationMin(35), ElevationMax(55),
                         Distance(0.5f), DistanceMin(0.4f), DistanceMax(1.f));
 

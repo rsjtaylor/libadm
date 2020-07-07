@@ -23,6 +23,11 @@ namespace adm {
   using SpeakerLabels = std::vector<SpeakerLabel>;
   ADD_TRAIT(SpeakerLabels, SpeakerLabelsTag);
 
+  /// @brief NamedType for speaker position in an AudioBlockFormat
+  using SpeakerPosition = boost::variant<SphericalSpeakerPosition, CartesianSpeakerPosition>;
+  struct SpeakerPositionTag {};
+  ADD_TRAIT(SpeakerPosition, SpeakerPostionTag);
+
   /// @brief Tag for AudioBlockFormatDirectSpeakers
   struct AudioBlockFormatDirectSpeakersTag {};
   /**
@@ -80,6 +85,10 @@ namespace adm {
     ADM_EXPORT void set(Rtime rtime);
     /// @brief Duration setter
     ADM_EXPORT void set(Duration duration);
+    /// @brief CartesianSpeakerPosition setter
+    ADM_EXPORT void set(CartesianSpeakerPosition speakerPosition);
+    /// @brief SphericalSpeakerPosition setter
+    ADM_EXPORT void set(SphericalSpeakerPosition speakerPosition);
     /// @brief SpeakerPosition setter
     ADM_EXPORT void set(SpeakerPosition speakerPosition);
 
@@ -105,14 +114,17 @@ namespace adm {
     ADM_EXPORT Duration get(detail::ParameterTraits<Duration>::tag) const;
     ADM_EXPORT SpeakerLabels
         get(detail::ParameterTraits<SpeakerLabels>::tag) const;
-    ADM_EXPORT SpeakerPosition
-        get(detail::ParameterTraits<SpeakerPosition>::tag) const;
+    ADM_EXPORT CartesianSpeakerPosition
+        get(detail::ParameterTraits<CartesianSpeakerPosition>::tag) const;
+    ADM_EXPORT SphericalSpeakerPosition
+        get(detail::ParameterTraits<SphericalSpeakerPosition>::tag) const;
 
     ADM_EXPORT bool has(detail::ParameterTraits<AudioBlockFormatId>::tag) const;
     ADM_EXPORT bool has(detail::ParameterTraits<Rtime>::tag) const;
     ADM_EXPORT bool has(detail::ParameterTraits<Duration>::tag) const;
     ADM_EXPORT bool has(detail::ParameterTraits<SpeakerLabels>::tag) const;
-    ADM_EXPORT bool has(detail::ParameterTraits<SpeakerPosition>::tag) const;
+    ADM_EXPORT bool has(detail::ParameterTraits<CartesianSpeakerPosition>::tag) const;
+    ADM_EXPORT bool has(detail::ParameterTraits<SphericalSpeakerPosition>::tag) const;
 
     template <typename Tag>
     bool isDefault(Tag) const {
@@ -122,6 +134,8 @@ namespace adm {
     ADM_EXPORT void unset(detail::ParameterTraits<Rtime>::tag);
     ADM_EXPORT void unset(detail::ParameterTraits<Duration>::tag);
     ADM_EXPORT void unset(detail::ParameterTraits<SpeakerLabels>::tag);
+    ADM_EXPORT void unset(detail::ParameterTraits<CartesianSpeakerPosition>::tag);
+    ADM_EXPORT void unset(detail::ParameterTraits<SphericalSpeakerPosition>::tag);
     ADM_EXPORT void unset(detail::ParameterTraits<SpeakerPosition>::tag);
 
     AudioBlockFormatId id_;
