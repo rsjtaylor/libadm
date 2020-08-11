@@ -341,7 +341,7 @@ namespace adm {
         XmlNode &parentNode, const std::string &name,
         const CartesianSpeakerPosition &position) {
       auto xNode = parentNode.addNode(name);
-      xNode.addAttribute("coordinate", "x");
+      xNode.addAttribute("coordinate", "X");
       xNode.addOptionalAttribute<XMin>(&position, "min");
       xNode.addOptionalAttribute<XMax>(&position, "max");
       if (position.has<ScreenEdgeLock>()) {
@@ -352,7 +352,7 @@ namespace adm {
       xNode.setValue(position.get<X>());
 
       auto yNode = parentNode.addNode(name);
-      yNode.addAttribute("coordinate", "y");
+      yNode.addAttribute("coordinate", "Y");
       yNode.addOptionalAttribute<YMin>(&position, "min");
       yNode.addOptionalAttribute<YMax>(&position, "max");
       if (position.has<ScreenEdgeLock>()) {
@@ -363,7 +363,7 @@ namespace adm {
       yNode.setValue(position.get<Y>());
       if (!position.isDefault<Z>()) {
         auto zNode = parentNode.addNode(name);
-        zNode.addAttribute("coordinate", "z");
+        zNode.addAttribute("coordinate", "Z");
         zNode.addOptionalAttribute<ZMin>(&position, "min");
         zNode.addOptionalAttribute<ZMax>(&position, "max");
         zNode.setValue(position.get<Z>());
