@@ -37,7 +37,7 @@ namespace adm {
      * in random order after the mandatory ADM parameters.
      */
     template <typename... Parameters>
-    CartesianSpeakerPosition(Parameters... optionalNamedArgs);
+    explicit CartesianSpeakerPosition(Parameters... optionalNamedArgs);
 
     /**
      * @brief ADM parameter getter template
@@ -200,7 +200,7 @@ namespace adm {
      * in random order after the mandatory ADM parameters.
      */
     template <typename... Parameters>
-    SphericalSpeakerPosition(Parameters... optionalNamedArgs);
+    explicit SphericalSpeakerPosition(Parameters... optionalNamedArgs);
 
     /**
      * @brief ADM parameter getter template
