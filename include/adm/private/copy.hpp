@@ -121,11 +121,11 @@ namespace adm {
   template <typename AudioBlockFormat>
   void copyAudioBlockFormats(std::shared_ptr<const AudioChannelFormat> src,
                              std::shared_ptr<AudioChannelFormat> dest) {
-    auto const& blockFormatsSrc = src->template getElements<AudioBlockFormat>();
-    auto const& blockFormatsDest = dest->template getElements<AudioBlockFormat>();
+    auto blockFormatsSrc = src->template getElements<AudioBlockFormat>();
+    auto blockFormatsDest = dest->template getElements<AudioBlockFormat>();
     for (auto const& blockFormatSrc : blockFormatsSrc) {
       auto foundBlockFormat =
-          std::find_if(blockFormatsDest.cbegin(), blockFormatsDest.cend(),
+          std::find_if(blockFormatsDest.begin(), blockFormatsDest.end(),
                        ParameterEqualTo<AudioBlockFormat, AudioBlockFormatId>(
                            blockFormatSrc));
       if (foundBlockFormat == blockFormatsDest.cend()) {
