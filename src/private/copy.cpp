@@ -23,35 +23,35 @@ namespace adm {
     // copy
     for (auto element : document->getElements<AudioProgramme>()) {
       mapping.audioProgramme[element] = element->copy();
-      copiedElements.push_back(mapping.audioProgramme.at(element));
+      copiedElements.emplace_back(mapping.audioProgramme.at(element));
     }
     for (auto element : document->getElements<AudioContent>()) {
       mapping.audioContent[element] = element->copy();
-      copiedElements.push_back(mapping.audioContent.at(element));
+      copiedElements.emplace_back(mapping.audioContent.at(element));
     }
     for (auto element : document->getElements<AudioObject>()) {
       mapping.audioObject[element] = element->copy();
-      copiedElements.push_back(mapping.audioObject.at(element));
+      copiedElements.emplace_back(mapping.audioObject.at(element));
     }
     for (auto element : document->getElements<AudioPackFormat>()) {
       mapping.audioPackFormat[element] = element->copy();
-      copiedElements.push_back(mapping.audioPackFormat.at(element));
+      copiedElements.emplace_back(mapping.audioPackFormat.at(element));
     }
     for (auto element : document->getElements<AudioChannelFormat>()) {
       mapping.audioChannelFormat[element] = element->copy();
-      copiedElements.push_back(mapping.audioChannelFormat.at(element));
+      copiedElements.emplace_back(mapping.audioChannelFormat.at(element));
     }
     for (auto element : document->getElements<AudioStreamFormat>()) {
       mapping.audioStreamFormat[element] = element->copy();
-      copiedElements.push_back(mapping.audioStreamFormat.at(element));
+      copiedElements.emplace_back(mapping.audioStreamFormat.at(element));
     }
     for (auto element : document->getElements<AudioTrackFormat>()) {
       mapping.audioTrackFormat[element] = element->copy();
-      copiedElements.push_back(mapping.audioTrackFormat.at(element));
+      copiedElements.emplace_back(mapping.audioTrackFormat.at(element));
     }
     for (auto element : document->getElements<AudioTrackUid>()) {
       mapping.audioTrackUid[element] = element->copy();
-      copiedElements.push_back(mapping.audioTrackUid.at(element));
+      copiedElements.emplace_back(mapping.audioTrackUid.at(element));
     }
 
     // resolve

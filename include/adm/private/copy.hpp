@@ -34,34 +34,34 @@ namespace adm {
   }  // namespace visitor
 
   template <typename Target>
-  void addElements(std::vector<ElementVariant> elements,
+  void addElements(std::vector<ElementVariant> const & elements,
                    std::shared_ptr<Target> target) {
-    for (auto& element : elements) {
+    for (auto const& element : elements) {
       boost::apply_visitor(visitor::addTo(target), element);
     }
   }
 
   template <typename ElementSrc, typename ElementDest>
   void resolveReferences(
-      std::shared_ptr<const ElementSrc> element,
-      std::map<std::shared_ptr<const ElementSrc>, std::shared_ptr<ElementSrc>>
+      std::shared_ptr<const ElementSrc> const& element,
+      std::map<std::shared_ptr<const ElementSrc>, std::shared_ptr<ElementSrc>>&
           mappingSrc,
-      std::map<std::shared_ptr<const ElementDest>, std::shared_ptr<ElementDest>>
+      std::map<std::shared_ptr<const ElementDest>, std::shared_ptr<ElementDest>> const&
           mappingDest) {
-    for (auto reference : element->template getReferences<ElementDest>()) {
+    for (auto const& reference : element->template getReferences<ElementDest>()) {
       mappingSrc.at(element)->addReference(mappingDest.at(reference));
     }
   }
 
   inline void resolveReferences(
-      std::shared_ptr<const AudioStreamFormat> element,
+      std::shared_ptr<const AudioStreamFormat> const& element,
       std::map<std::shared_ptr<const AudioStreamFormat>,
-               std::shared_ptr<AudioStreamFormat>>
+               std::shared_ptr<AudioStreamFormat>>&
           mappingSrc,
       std::map<std::shared_ptr<const AudioTrackFormat>,
-               std::shared_ptr<AudioTrackFormat>>
+               std::shared_ptr<AudioTrackFormat>> const&
           mappingDest) {
-    for (auto weakReference : element->getAudioTrackFormatReferences()) {
+    for (auto const& weakReference : element->getAudioTrackFormatReferences()) {
       auto reference = weakReference.lock();
       if (reference) {
         mappingSrc.at(element)->addReference(
@@ -72,24 +72,24 @@ namespace adm {
 
   template <typename ElementSrc, typename ElementDest>
   void resolveReference(
-      std::shared_ptr<const ElementSrc> element,
-      std::map<std::shared_ptr<const ElementSrc>, std::shared_ptr<ElementSrc>>
+      std::shared_ptr<const ElementSrc> const& element,
+      std::map<std::shared_ptr<const ElementSrc>, std::shared_ptr<ElementSrc>>&
           mappingSrc,
-      std::map<std::shared_ptr<const ElementDest>, std::shared_ptr<ElementDest>>
+      std::map<std::shared_ptr<const ElementDest>, std::shared_ptr<ElementDest>> const&
           mappingDest) {
-    if (auto reference = element->template getReference<ElementDest>()) {
+    if (auto const& reference = element->template getReference<ElementDest>()) {
       mappingSrc.at(element)->setReference(mappingDest.at(reference));
     }
   }
 
   template <typename ElementSrc, typename ElementDest>
   void resolveComplementaries(
-      std::shared_ptr<const ElementSrc> element,
-      std::map<std::shared_ptr<const ElementSrc>, std::shared_ptr<ElementSrc>>
+      std::shared_ptr<const ElementSrc> const& element,
+      std::map<std::shared_ptr<const ElementSrc>, std::shared_ptr<ElementSrc>>&
           mappingSrc,
-      std::map<std::shared_ptr<const ElementDest>, std::shared_ptr<ElementDest>>
+      std::map<std::shared_ptr<const ElementDest>, std::shared_ptr<ElementDest>> const&
           mappingDest) {
-    for (auto reference : element->getComplementaryObjects()) {
+    for (auto const& reference : element->getComplementaryObjects()) {
       mappingSrc.at(element)->addComplementary(mappingDest.at(reference));
     }
   }
@@ -121,14 +121,14 @@ namespace adm {
   template <typename AudioBlockFormat>
   void copyAudioBlockFormats(std::shared_ptr<const AudioChannelFormat> src,
                              std::shared_ptr<AudioChannelFormat> dest) {
-    auto blockFormatsSrc = src->template getElements<AudioBlockFormat>();
-    auto blockFormatsDest = dest->template getElements<AudioBlockFormat>();
-    for (auto blockFormatSrc : blockFormatsSrc) {
+    auto const& blockFormatsSrc = src->template getElements<AudioBlockFormat>();
+    auto const& blockFormatsDest = dest->template getElements<AudioBlockFormat>();
+    for (auto const& blockFormatSrc : blockFormatsSrc) {
       auto foundBlockFormat =
-          std::find_if(blockFormatsDest.begin(), blockFormatsDest.end(),
+          std::find_if(blockFormatsDest.cbegin(), blockFormatsDest.cend(),
                        ParameterEqualTo<AudioBlockFormat, AudioBlockFormatId>(
                            blockFormatSrc));
-      if (foundBlockFormat == blockFormatsDest.end()) {
+      if (foundBlockFormat == blockFormatsDest.cend()) {
         dest->add(blockFormatSrc);
       }
     }
