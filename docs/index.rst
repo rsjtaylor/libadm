@@ -22,8 +22,8 @@ libadm – ITU-R BS.2076 Library
   :maxdepth: 2
   :caption: Reference
 
-  element_api
   reference_document
+  element_api
   reference_elements
   reference_helpers
   reference_utilities
