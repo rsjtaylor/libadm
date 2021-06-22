@@ -7,7 +7,7 @@ This page documents the API convention for accessing parameters of ADM element
 classes. Element classes like :cpp:class:`AudioBlockFormatObjects` contain many
 parameters, each with different types (thanks to using named types). These
 parameters can be accessed through a common set of templated and overloaded
-methods defined on elements. Compared to standard accessors methods, this makes
+methods defined on elements. Compared to standard accessor methods, this makes
 it easy to write templates which handle parameters generically.
 
 .. note::
@@ -21,8 +21,9 @@ The set of methods which may be defined for each parameter of type
 
    .. cpp:function:: template<typename Parameter> Parameter get()
 
-      Get the value of a parameter. If the parameter has no default value and has
-      not been set then an error is raised.
+      Get the value of a parameter. If the parameter has no default value and
+      has not been set then an error is raised. This precondition can be checked
+      by calling :cpp:func:`has`.
 
    .. cpp:function:: void set(Parameter parameter)
 
@@ -35,14 +36,15 @@ The set of methods which may be defined for each parameter of type
 
    .. cpp:function:: template<typename Parameter> void unset<Parameter>()
 
-      Removes the ADM parameter if it is optional or resets it to the default
-      value if there is one.
+      Resets the parameter to its default value if it has one, otherwise removes
+      it from the element.
 
    .. cpp:function:: template<typename Parameter> bool isDefault<Parameter>()
 
-      Returns true if the parameter has a default and has been set; this is useful
-      to see if the default value was specified explicitly in the ADM XML, and is
-      used to control whether default values are written out in XML.
+      Returns true if the parameter has a default and has been set; this is
+      useful to see if the default value was specified explicitly in the
+      ADM XML, and is used to control whether default values are written out in
+      XML.
 
    .. cpp:function:: bool add(Parameter parameter)
 
@@ -52,14 +54,15 @@ The set of methods which may be defined for each parameter of type
 
    .. cpp:function:: void remove(Parameter parameter)
 
-      For parameters with multiple values, remove one.
+      For parameters with multiple values, remove the provided value if present.
 
 These methods are implemented in some common patterns for parameters which
 behave in different ways:
 
 .. cpp:class:: template<typename T> adm::RequiredParameter
 
-   Required parameters must be specified in the ADM XML.
+   Required parameters are those which must always be present in the element
+   according to the ADM standard.
 
    .. cpp:function:: template<> bool get<T>()
 
@@ -100,7 +103,8 @@ behave in different ways:
 .. cpp:class:: template<typename T> adm::DefaultParameter
 
    Default parameters may or may not be specified, but have a default defined
-   in the ADM.
+   by the standard. The default is assumed by something consuming ADM, so will
+   only be written out by libadm if :cpp:func:`set` explicitly.
 
    .. cpp:function:: template<> bool get<T>()
 
@@ -124,8 +128,8 @@ behave in different ways:
 
 .. cpp:class:: template<typename VectorT> adm::VectorParameter
 
-   Vector parameters have multiple values, and some defined concept of
-   equality.
+   Vector parameters have multiple values, and some concept of equality, defined
+   by :cpp:class:`detail::ParameterCompare<T>`
 
    ``get`` and ``set`` methods get and set a :cpp:class:`std::vector\<T>`
    holding the parameters, while ``add`` and ``remove`` add and remove
